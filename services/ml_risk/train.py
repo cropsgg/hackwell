@@ -15,8 +15,9 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
 from sklearn.metrics import (
     roc_auc_score, average_precision_score, brier_score_loss,
-    classification_report, confusion_matrix, calibration_curve
+    classification_report, confusion_matrix
 )
+from sklearn.calibration import calibration_curve
 from sklearn.calibration import CalibratedClassifierCV
 import structlog
 

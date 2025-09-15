@@ -73,9 +73,9 @@ class FeatureProcessor:
                     self.encoders[feature] = encoder
             
             # Store feature names for later use
+            self.is_fitted = True  # Set fitted flag before transform
             processed_data = self.transform(data)
             self.feature_names = list(processed_data.columns)
-            self.is_fitted = True
             
             logger.info("Feature processor fitted successfully", 
                        n_features=len(self.feature_names),
@@ -87,6 +87,10 @@ class FeatureProcessor:
         except Exception as e:
             logger.error("Failed to fit feature processor", error=str(e))
             raise
+    
+    def fit_transform(self, data: pd.DataFrame, target_col: Optional[str] = None) -> pd.DataFrame:
+        """Fit the processor and transform data in one step."""
+        return self.fit(data, target_col).transform(data)
     
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
         """Transform data using fitted preprocessors."""

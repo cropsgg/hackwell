@@ -6,9 +6,9 @@ from typing import Dict, Any, Tuple, List
 from sklearn.metrics import (
     roc_auc_score, average_precision_score, brier_score_loss,
     confusion_matrix, classification_report, precision_recall_curve,
-    roc_curve, accuracy_score, f1_score, precision_score, recall_score,
-    calibration_curve
+    roc_curve, accuracy_score, f1_score, precision_score, recall_score
 )
+from sklearn.calibration import calibration_curve
 import matplotlib.pyplot as plt
 import seaborn as sns
 import structlog
