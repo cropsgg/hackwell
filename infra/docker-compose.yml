@@ -1,0 +1,215 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: wellness_postgres
+    environment:
+      POSTGRES_DB: wellness
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ../db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d wellness"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - wellness_network
+
+  # pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: wellness_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@wellness.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - wellness_network
+
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    container_name: wellness_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - wellness_network
+
+  # FastAPI Gateway
+  gateway:
+    build:
+      context: ../gateway
+      dockerfile: Dockerfile
+    container_name: wellness_gateway
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/wellness
+      REDIS_URL: redis://redis:6379
+      ENVIRONMENT: development
+      LOG_LEVEL: INFO
+      CORS_ORIGINS: "http://localhost:3000,http://localhost:8080"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../gateway:/app
+      - ../services:/services
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - wellness_network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ML Risk Service
+  ml_risk:
+    build:
+      context: ../services/ml_risk
+      dockerfile: Dockerfile
+    container_name: wellness_ml_risk
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/wellness
+      MODEL_PATH: /app/models
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../services/ml_risk:/app
+      - ml_models:/app/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - wellness_network
+    ports:
+      - "8001:8000"
+
+  # Agent Orchestrator Service
+  agents:
+    build:
+      context: ../services/agents
+      dockerfile: Dockerfile
+    container_name: wellness_agents
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/wellness
+      REDIS_URL: redis://redis:6379
+      ML_RISK_URL: http://ml_risk:8000
+      VERIFIER_URL: http://verifier:8000
+    volumes:
+      - ../services/agents:/app
+    depends_on:
+      - postgres
+      - redis
+      - ml_risk
+    networks:
+      - wellness_network
+    ports:
+      - "8002:8000"
+
+  # Evidence Verifier Service
+  verifier:
+    build:
+      context: ../services/verifier
+      dockerfile: Dockerfile
+    container_name: wellness_verifier
+    environment:
+      PUBMED_BASE: https://eutils.ncbi.nlm.nih.gov/entrez/eutils
+      OPENFDA_BASE: https://api.fda.gov
+      RXNORM_BASE: https://rxnav.nlm.nih.gov/REST
+      REDIS_URL: redis://redis:6379
+      EVIDENCE_MIN_SCORE: 0.6
+    volumes:
+      - ../services/verifier:/app
+    depends_on:
+      - redis
+    networks:
+      - wellness_network
+    ports:
+      - "8003:8000"
+
+  # Data Ingest Service
+  ingest:
+    build:
+      context: ../services/ingest
+      dockerfile: Dockerfile
+    container_name: wellness_ingest
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/wellness
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../services/ingest:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - wellness_network
+    ports:
+      - "8004:8000"
+
+  # WebSocket Streaming Service
+  ws_stream:
+    build:
+      context: ../services/ws_stream
+      dockerfile: Dockerfile
+    container_name: wellness_ws_stream
+    environment:
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../services/ws_stream:/app
+    depends_on:
+      - redis
+    networks:
+      - wellness_network
+    ports:
+      - "8005:8000"
+
+  # Background Jobs Service
+  jobs:
+    build:
+      context: ../services/jobs
+      dockerfile: Dockerfile
+    container_name: wellness_jobs
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/wellness
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../services/jobs:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - wellness_network
+    command: python workers.py
+
+networks:
+  wellness_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  redis_data:
+    driver: local
+  ml_models:
+    driver: local
