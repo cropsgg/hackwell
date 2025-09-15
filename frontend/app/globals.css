@@ -1,9 +1,8 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
+@layer base {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
@@ -123,9 +122,11 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: white;
+    color: #111827;
   }
 }

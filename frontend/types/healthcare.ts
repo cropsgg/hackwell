@@ -67,6 +67,10 @@ export interface ModelMetrics {
     auc_roc: number;
     auprc: number;
     confusion_matrix: number[][];
+    roc_curve?: {
+      fpr: number[];
+      tpr: number[];
+    };
   };
   feature_importance: Array<{
     feature: string;

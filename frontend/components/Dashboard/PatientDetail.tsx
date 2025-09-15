@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePatientPrediction, usePatientDetails } from '@/services/api';
 import { getRiskBadgeColor, formatRiskProbability, getPriorityColor } from '@/services/api';
-import type { RiskExplanation, Recommendation, TrendData } from '@/types/healthcare';
+import type { RiskExplanation, Recommendation, TrendData, VitalSigns } from '@/types/healthcare';
 
 interface PatientDetailProps {
   patientId: string;
@@ -27,7 +27,7 @@ export default function PatientDetail({ patientId, onBack }: PatientDetailProps)
   const hasError = predictionError || detailsError;
 
   
-  const vitalSignsData = details?.vital_signs?.map(vs => ({
+  const vitalSignsData = details?.vital_signs?.map((vs: VitalSigns) => ({
     date: new Date(vs.timestamp).toLocaleDateString(),
     glucose: vs.glucose,
     systolic: vs.systolic_bp,
@@ -37,7 +37,7 @@ export default function PatientDetail({ patientId, onBack }: PatientDetailProps)
   })) || [];
 
   
-  const riskHistoryData = details?.risk_history?.map(rh => ({
+  const riskHistoryData = details?.risk_history?.map((rh: { date: string; risk_score: number; risk_category: string }) => ({
     date: new Date(rh.date).toLocaleDateString(),
     riskScore: rh.risk_score * 100,
     category: rh.risk_category,
@@ -365,7 +365,7 @@ export default function PatientDetail({ patientId, onBack }: PatientDetailProps)
                 </div>
               ) : details?.recent_events?.length ? (
                 <div className="space-y-3">
-                  {details.recent_events.map((event, index: number) => (
+                  {details.recent_events.map((event: { date: string; event_type: string; description: string; severity: 'low' | 'medium' | 'high' }, index: number) => (
                     <div key={index} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="font-medium">{event.event_type}</h4>
