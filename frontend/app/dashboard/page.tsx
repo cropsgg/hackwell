@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import RiskBadgeComponent from '@/components/Dashboard/RiskBadge';
-import EvidenceCard from '@/components/Dashboard/EvidenceCard';
-import RecommendationCard from '@/components/Dashboard/RecommendationCard';
+// import RiskBadgeComponent from '@/components/Dashboard/RiskBadge';
+// import EvidenceCard from '@/components/Dashboard/EvidenceCard';
+// import RecommendationCard from '@/components/Dashboard/RecommendationCard';
 import TimelineChart from '@/components/Dashboard/TimelineChart';
 import TopBar from '@/components/Dashboard/TopBar';
 import { 
@@ -15,28 +15,18 @@ import {
   Activity, 
   Droplets, 
   Brain, 
-  AlertCircle, 
-  Clock, 
   User, 
   FileText, 
-  MessageCircle, 
   Menu,
   BookOpen,
-  Pill,
-  Stethoscope,
-  Send,
-  Home,
   Target,
   Users,
-  TrendingUp,
   CheckCircle,
-  X,
   ExternalLink,
   Filter,
   Search,
   BarChart3,
-  LineChart,
-  Shield
+  LineChart
 } from 'lucide-react';
 
 // Mock data for clinician dashboard - Patient List
@@ -103,7 +93,7 @@ const mockPatients = [
   }
 ];
 
-const selectedPatient = mockPatients[0]; // Sarah Johnson for detailed view
+// const selectedPatient = mockPatients[0]; // Sarah Johnson for detailed view
 
 const mockClinician = {
   name: "Dr. Michael Chen",
@@ -111,32 +101,32 @@ const mockClinician = {
   department: "Internal Medicine"
 };
 
-const mockEvidence = [
-  {
-    title: "ADA Guidelines for Diabetes Management",
-    description: "Current evidence supports HbA1c targets <7% for most adults with diabetes to reduce microvascular complications.",
-    evidenceLevel: "A" as const,
-    source: "American Diabetes Association, 2024",
-    type: "guideline" as const,
-    url: "#"
-  },
-  {
-    title: "Framingham Heart Study Risk Assessment",
-    description: "10-year cardiovascular risk calculation based on age, gender, cholesterol levels, and blood pressure readings.",
-    evidenceLevel: "A" as const,
-    source: "Framingham Heart Study, 2023",
-    type: "study" as const,
-    url: "#"
-  },
-  {
-    title: "DASH Diet for Hypertension Control",
-    description: "Dietary approaches to stop hypertension show significant reduction in systolic BP (8-14 mmHg reduction).",
-    evidenceLevel: "B" as const,
-    source: "NEJM Hypertension Research, 2023",
-    type: "research" as const,
-    url: "#"
-  }
-];
+// const mockEvidence = [
+//   {
+//     title: "ADA Guidelines for Diabetes Management",
+//     description: "Current evidence supports HbA1c targets <7% for most adults with diabetes to reduce microvascular complications.",
+//     evidenceLevel: "A" as const,
+//     source: "American Diabetes Association, 2024",
+//     type: "guideline" as const,
+//     url: "#"
+//   },
+//   {
+//     title: "Framingham Heart Study Risk Assessment",
+//     description: "10-year cardiovascular risk calculation based on age, gender, cholesterol levels, and blood pressure readings.",
+//     evidenceLevel: "A" as const,
+//     source: "Framingham Heart Study, 2023",
+//     type: "study" as const,
+//     url: "#"
+//   },
+//   {
+//     title: "DASH Diet for Hypertension Control",
+//     description: "Dietary approaches to stop hypertension show significant reduction in systolic BP (8-14 mmHg reduction).",
+//     evidenceLevel: "B" as const,
+//     source: "NEJM Hypertension Research, 2023",
+//     type: "research" as const,
+//     url: "#"
+//   }
+// ];
 
 const mockRecommendations = [
   {

@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Users/crops/Desktop/hackwell/frontend/app/layout":["static/media/e4af272ccee01ff0-s.p.woff2","static/media/40d40f0f334d7ad1-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';

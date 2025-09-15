@@ -15,10 +15,8 @@ import {
   AlertCircle, 
   Clock, 
   User, 
-  FileText, 
   MessageCircle, 
   Menu,
-  BookOpen,
   Pill,
   Calendar,
   CheckCircle,
@@ -35,10 +33,33 @@ import {
   AlertTriangle,
   Award,
   Stethoscope,
-  Dumbbell,
   Apple,
   Zap
 } from 'lucide-react';
+
+// Type definitions
+interface Task {
+  id: number;
+  title: string;
+  description: string;
+  importance: 'critical' | 'high' | 'medium' | 'low';
+  category: string;
+  icon: React.ReactNode;
+  completed: boolean;
+  streak: number;
+  dueTime?: string;
+}
+
+interface Medication {
+  id: number;
+  name: string;
+  dosage: string;
+  frequency: string;
+  nextDose: string;
+  taken: boolean;
+  sideEffects: string[];
+  instructions: string;
+}
 
 // Mock patient data for wellness-focused portal
 const mockPatient = {
@@ -154,6 +175,9 @@ const mockMedications = [
     dosage: "500mg",
     frequency: "Twice daily",
     nextDose: "8:00 PM",
+    taken: false,
+    condition: "Diabetes",
+    prescriber: "Chen",
     instructions: "Take with food to reduce stomach upset",
     sideEffects: ["Nausea", "Diarrhea", "Metallic taste"],
     interactions: ["Avoid alcohol", "Monitor with contrast dyes"]
@@ -164,6 +188,9 @@ const mockMedications = [
     dosage: "10mg",
     frequency: "Once daily",
     nextDose: "8:00 PM",
+    taken: true,
+    condition: "Hypertension",
+    prescriber: "Chen",
     instructions: "Take at the same time each day",
     sideEffects: ["Dry cough", "Dizziness", "Fatigue"],
     interactions: ["Monitor potassium levels", "Avoid NSAIDs"]
@@ -174,7 +201,7 @@ const mockReminders = [
   {
     id: 1,
     title: "Evening Medication",
-    message: "Don't forget your blood pressure medication",
+    message: "Don&apos;t forget your blood pressure medication",
     time: "6:00 PM",
     type: "medication",
     urgent: false
@@ -190,7 +217,7 @@ const mockReminders = [
   {
     id: 3,
     title: "Hydration Reminder",
-    message: "You're doing great! Try to drink more water today",
+    message: "You&apos;re doing great! Try to drink more water today",
     time: "Now",
     type: "wellness",
     urgent: false
@@ -412,12 +439,12 @@ export default function PatientDashboard() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Target className="w-5 h-5" />
-                      Today's Priority Tasks
+                      Today&apos;s Priority Tasks
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {mockDailyPlan.filter((task: any) => task.importance === 'critical' || task.importance === 'high').slice(0, 3).map((task: any) => (
+                      {mockDailyPlan.filter((task) => task.importance === 'critical' || task.importance === 'high').slice(0, 3).map((task) => (
                         <div key={task.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
                           <Checkbox
                             checked={completedTasks.has(task.id)}
@@ -483,7 +510,7 @@ export default function PatientDashboard() {
               <div className="space-y-6">
                 <div className="text-center">
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Your Health Journey</h2>
-                  <p className="text-gray-600">Let's get you set up for success with personalized care</p>
+                  <p className="text-gray-600">Let&apos;s get you set up for success with personalized care</p>
                 </div>
 
                 {/* Onboarding Progress */}
@@ -517,7 +544,7 @@ export default function PatientDashboard() {
                         <Plus className="w-6 h-6 text-gray-400" />
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900">EHR Integration (Optional)</h3>
-                          <p className="text-sm text-gray-600">Connect with your doctor's electronic health records</p>
+                          <p className="text-sm text-gray-600">Connect with your doctor&apos;s electronic health records</p>
                         </div>
                         <Button variant="outline" size="sm">Setup Later</Button>
                       </div>
@@ -584,7 +611,7 @@ export default function PatientDashboard() {
                       </div>
                     </div>
                     <p className="mt-4 text-gray-600 max-w-md mx-auto">
-                      Your current health metrics show you're managing your conditions well. Small daily improvements will help lower your risk over time.
+                      Your current health metrics show you&apos;re managing your conditions well. Small daily improvements will help lower your risk over time.
                     </p>
                   </CardContent>
                 </Card>
@@ -647,7 +674,7 @@ export default function PatientDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="font-semibold text-gray-900">Today's Progress</h3>
+                        <h3 className="font-semibold text-gray-900">Today&apos;s Progress</h3>
                         <p className="text-sm text-gray-600">Keep up the great work!</p>
                       </div>
                       <div className="text-right">
@@ -661,7 +688,7 @@ export default function PatientDashboard() {
 
                 {/* Task Cards with Streaks */}
                 <div className="space-y-4">
-                  {mockDailyPlan.map((task: any) => (
+                  {mockDailyPlan.map((task) => (
                     <Card key={task.id} className={`bg-white border border-gray-200 transition-all duration-200 ${
                       completedTasks.has(task.id) ? 'ring-2 ring-green-200 bg-green-50/30' : 'hover:shadow-md'
                     }`}>
@@ -889,12 +916,12 @@ export default function PatientDashboard() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Clock className="w-5 h-5 text-blue-500" />
-                      Today's Schedule
+                      Today&apos;s Schedule
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {mockMedications.map((med: any) => (
+                      {mockMedications.map((med) => (
                         <div key={med.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                           <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -922,7 +949,7 @@ export default function PatientDashboard() {
 
                 {/* Medication Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {mockMedications.map((med: any) => (
+                  {mockMedications.map((med) => (
                     <Card key={`detail-${med.id}`} className="bg-white border border-gray-200">
                       <CardHeader>
                         <CardTitle className="flex items-center justify-between">
@@ -1128,7 +1155,7 @@ export default function PatientDashboard() {
 
                       <div className="flex gap-3 justify-end">
                         <div className="bg-green-600 text-white rounded-lg p-3 max-w-xs">
-                          <p className="text-sm">I'm feeling okay, just a bit tired. Should I be concerned about the reading?</p>
+                          <p className="text-sm">I&apos;m feeling okay, just a bit tired. Should I be concerned about the reading?</p>
                           <span className="text-xs text-green-200 mt-1 block">9:18 AM</span>
                         </div>
                         <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
@@ -1141,7 +1168,7 @@ export default function PatientDashboard() {
                           <MessageCircle className="w-4 h-4 text-white" />
                         </div>
                         <div className="bg-gray-100 rounded-lg p-3 max-w-md">
-                          <p className="text-sm">That reading is slightly elevated. Let's focus on your medication adherence and stress management. Have you taken your morning Lisinopril? Also, try some deep breathing exercises - I can guide you through them.</p>
+                          <p className="text-sm">That reading is slightly elevated. Let&apos;s focus on your medication adherence and stress management. Have you taken your morning Lisinopril? Also, try some deep breathing exercises - I can guide you through them.</p>
                           <span className="text-xs text-gray-500 mt-1 block">9:20 AM</span>
                         </div>
                       </div>
@@ -1210,7 +1237,7 @@ export default function PatientDashboard() {
                       
                       <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <h4 className="font-medium text-gray-900 mb-2">Gentle Reminder</h4>
-                        <p className="text-sm text-gray-700">Don't forget to log your evening blood pressure reading. Consistent monitoring helps us track your progress better.</p>
+                        <p className="text-sm text-gray-700">Don&apos;t forget to log your evening blood pressure reading. Consistent monitoring helps us track your progress better.</p>
                       </div>
                     </div>
                   </CardContent>
@@ -1326,7 +1353,7 @@ export default function PatientDashboard() {
                         <Brain className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Today's Health Factors</h3>
+                        <h3 className="font-semibold text-gray-900">Today&apos;s Health Factors</h3>
                         <p className="text-sm text-gray-600">AI analysis of your wellness patterns</p>
                       </div>
                     </div>
@@ -1393,7 +1420,7 @@ export default function PatientDashboard() {
                       <div className="flex items-start space-x-3 justify-end">
                         <div className="bg-emerald-50 rounded-lg p-3 max-w-xs">
                           <p className="text-sm text-emerald-900">
-                            Thank you! I've been feeling much better. Should I continue with the same medication schedule?
+                            Thank you! I&apos;ve been feeling much better. Should I continue with the same medication schedule?
                           </p>
                           <p className="text-xs text-emerald-600 mt-1">You • 1 hour ago</p>
                         </div>

@@ -5,8 +5,6 @@ import type {
   ModelMetrics,
   PatientDetails,
   HealthStatus,
-  PatientFilters,
-  ApiResponse,
   ApiError
 } from '@/types/healthcare';
 
@@ -228,7 +226,7 @@ export const getPriorityColor = (priority: string): string => {
 export const handleApiError = (error: ApiError | Error | unknown): string => {
   
   if (typeof error === 'object' && error !== null && 'response' in error) {
-    const resp = (error as any).response;
+    const resp = (error as { response?: { data?: { message?: string } } }).response;
     if (resp?.data?.message) {
       return resp.data.message;
     }
@@ -252,8 +250,8 @@ export const transformCohortDataForChart = (cohort: CohortSummary) => {
   ];
 };
 
-export const transformTrendsForChart = (trends: any) => {
-  return Object.entries(trends).map(([key, trend]: [string, any]) => ({
+export const transformTrendsForChart = (trends: Record<string, unknown>) => {
+  return Object.entries(trends).map(([key, trend]: [string, unknown]) => ({
     name: key.replace('_trend', '').replace('_', ' '),
     direction: trend.direction,
     magnitude: trend.magnitude,

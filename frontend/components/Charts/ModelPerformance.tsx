@@ -8,32 +8,32 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle, TrendingUp, Target, BarChart3 } from 'lucide-react';
 import { useModelMetrics } from '@/services/api';
-import type { ModelMetrics } from '@/types/healthcare';
+// import type { ModelMetrics } from '@/types/healthcare';
 
 export default function ModelPerformance() {
-  const { metrics, isLoading, isError, refresh } = useModelMetrics();
+  const { metrics, isLoading, isError } = useModelMetrics();
 
   
-  const transformConfusionMatrix = (matrix: number[][]) => {
-    const data = [];
-    for (let i = 0; i < matrix.length; i++) {
-      for (let j = 0; j < matrix[i].length; j++) {
-        data.push({
-          predicted: j,
-          actual: i,
-          value: matrix[i][j],
-          label: `Actual: ${i}, Predicted: ${j}`,
-        });
-      }
-    }
-    return data;
-  };
+  // const transformConfusionMatrix = (matrix: number[][]) => {
+  //   const data = [];
+  //   for (let i = 0; i < matrix.length; i++) {
+  //     for (let j = 0; j < matrix[i].length; j++) {
+  //       data.push({
+  //         predicted: j,
+  //         actual: i,
+  //         value: matrix[i][j],
+  //         label: `Actual: ${i}, Predicted: ${j}`,
+  //       });
+  //     }
+  //   }
+  //   return data;
+  // };
 
   
-  const getConfusionMatrixColor = (value: number, max: number) => {
-    const intensity = value / max;
-    return `rgba(59, 130, 246, ${intensity})`;
-  };
+  // const getConfusionMatrixColor = (value: number, max: number) => {
+  //   const intensity = value / max;
+  //   return `rgba(59, 130, 246, ${intensity})`;
+  // };
 
   if (isError) {
     return (

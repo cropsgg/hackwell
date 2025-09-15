@@ -2,30 +2,27 @@
 
 import React from 'react';
 import { 
-  Eye, 
   Heart, 
   Brain, 
   Activity, 
   Users, 
-  Zap, 
   Target, 
   Globe,
   ArrowRight,
   Play,
   Shield,
-  Clock,
   TrendingUp,
   Award,
   CheckCircle,
   Stethoscope,
   Pill,
-  Apple,
   Star
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function Homepage() {
   const router = useRouter();
@@ -260,10 +257,11 @@ export default function Homepage() {
             {healthMetrics.map((metric, index) => (
               <Card key={index} className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
                 <div className="relative h-64">
-                  <img 
+                  <Image 
                     src={metric.image}
                     alt={metric.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   
@@ -353,11 +351,13 @@ export default function Homepage() {
                       <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-gray-600 mb-6 italic">"{testimonial.content}"</p>
+                  <p className="text-gray-600 mb-6 italic">&ldquo;{testimonial.content}&rdquo;</p>
                   <div className="flex items-center space-x-3">
-                    <img 
+                    <Image 
                       src={testimonial.avatar} 
                       alt={testimonial.name}
+                      width={48}
+                      height={48}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                     <div>

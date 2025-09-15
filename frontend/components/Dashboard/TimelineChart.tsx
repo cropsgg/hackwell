@@ -19,7 +19,7 @@ const TimelineChart: React.FC<TimelineChartProps> = ({
   events,
   className = ""
 }) => {
-  const getEventIcon = (type: string, trend?: string) => {
+  const getEventIcon = (type: string) => {
     switch (type) {
       case 'assessment':
         return <div className="w-3 h-3 bg-blue-500 rounded-full" />;
